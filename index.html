@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Lost and Found Assistant</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <header class="topbar">
+    <div>
+      <h1>Lost and Found Assistant</h1>
+      <p class="subtitle">Campus and community item reporting system</p>
+    </div>
+    <div class="topbar-actions">
+      <button id="openLoginBtn" class="btn secondary">Login</button>
+      <button id="openRegisterBtn" class="btn">Register</button>
+    </div>
+  </header>
+
+  <main class="container">
+    <section class="hero card">
+      <div>
+        <h2>Report, search, and claim lost or found items</h2>
+        <p>
+          This starter project uses HTML, CSS, and JavaScript on the frontend
+          and is ready to connect to Google Apps Script as the backend API.
+        </p>
+      </div>
+      <div class="hero-actions">
+        <button id="heroLostBtn" class="btn">Report Lost Item</button>
+        <button id="heroFoundBtn" class="btn secondary">Report Found Item</button>
+      </div>
+    </section>
+
+    <section class="stats-grid">
+      <article class="card stat">
+        <h3 id="lostCount">0</h3>
+        <p>Lost Reports</p>
+      </article>
+      <article class="card stat">
+        <h3 id="foundCount">0</h3>
+        <p>Found Reports</p>
+      </article>
+      <article class="card stat">
+        <h3 id="claimCount">0</h3>
+        <p>Claims</p>
+      </article>
+      <article class="card stat">
+        <h3 id="resolvedCount">0</h3>
+        <p>Resolved</p>
+      </article>
+    </section>
+
+    <section class="grid-two">
+      <section class="card">
+        <h2>Search Reports</h2>
+        <form id="searchForm" class="form-grid">
+          <input type="text" id="searchKeyword" placeholder="Search by item name or description" />
+          <select id="searchType">
+            <option value="all">All Reports</option>
+            <option value="lost">Lost Items</option>
+            <option value="found">Found Items</option>
+          </select>
+          <select id="searchCategory">
+            <option value="">All Categories</option>
+            <option value="Electronics">Electronics</option>
+            <option value="Documents">Documents</option>
+            <option value="Bags">Bags</option>
+            <option value="Keys">Keys</option>
+            <option value="Accessories">Accessories</option>
+            <option value="Others">Others</option>
+          </select>
+          <button type="submit" class="btn">Search</button>
+        </form>
+      </section>
+
+      <section class="card">
+        <h2>Quick Actions</h2>
+        <div class="quick-actions">
+          <button class="btn" id="quickLostBtn">Add Lost Report</button>
+          <button class="btn secondary" id="quickFoundBtn">Add Found Report</button>
+          <button class="btn danger" id="seedBtn">Load Demo Data</button>
+        </div>
+      </section>
+    </section>
+
+    <section class="grid-two">
+      <section class="card">
+        <div class="section-header">
+          <h2>Recent Lost Items</h2>
+          <button id="refreshLostBtn" class="btn secondary">Refresh</button>
+        </div>
+        <div id="lostList" class="list"></div>
+      </section>
+
+      <section class="card">
+        <div class="section-header">
+          <h2>Recent Found Items</h2>
+          <button id="refreshFoundBtn" class="btn secondary">Refresh</button>
+        </div>
+        <div id="foundList" class="list"></div>
+      </section>
+    </section>
+
+    <section class="card">
+      <div class="section-header">
+        <h2>Claims and Resolutions</h2>
+        <button id="refreshClaimsBtn" class="btn secondary">Refresh</button>
+      </div>
+      <div id="claimsList" class="list"></div>
+    </section>
+  </main>
+
+  <div id="toast" class="toast hidden"></div>
+
+  <div id="authModal" class="modal hidden">
+    <div class="modal-content">
+      <div class="section-header">
+        <h2 id="authTitle">Register</h2>
+        <button class="icon-btn" data-close="authModal">&times;</button>
+      </div>
+      <form id="authForm" class="form-grid">
+        <input type="hidden" id="authMode" value="register" />
+        <input type="text" id="fullName" placeholder="Full name" required />
+        <input type="email" id="email" placeholder="Email" required />
+        <input type="tel" id="phone" placeholder="Phone number" />
+        <input type="password" id="password" placeholder="Password" required />
+        <button type="submit" class="btn">Submit</button>
+      </form>
+    </div>
+  </div>
+
+  <div id="reportModal" class="modal hidden">
+    <div class="modal-content large">
+      <div class="section-header">
+        <h2 id="reportTitle">New Report</h2>
+        <button class="icon-btn" data-close="reportModal">&times;</button>
+      </div>
+      <form id="reportForm" class="form-grid">
+        <input type="hidden" id="reportType" value="lost" />
+        <input type="text" id="itemName" placeholder="Item name" required />
+        <select id="category" required>
+          <option value="">Select category</option>
+          <option value="Electronics">Electronics</option>
+          <option value="Documents">Documents</option>
+          <option value="Bags">Bags</option>
+          <option value="Keys">Keys</option>
+          <option value="Accessories">Accessories</option>
+          <option value="Others">Others</option>
+        </select>
+        <input type="text" id="location" placeholder="Location" required />
+        <input type="date" id="itemDate" required />
+        <input type="url" id="imageUrl" placeholder="Image URL (optional)" />
+        <textarea id="description" rows="4" placeholder="Description" required></textarea>
+        <button type="submit" class="btn">Save Report</button>
+      </form>
+    </div>
+  </div>
+
+  <div id="claimModal" class="modal hidden">
+    <div class="modal-content">
+      <div class="section-header">
+        <h2>Submit Claim</h2>
+        <button class="icon-btn" data-close="claimModal">&times;</button>
+      </div>
+      <form id="claimForm" class="form-grid">
+        <input type="hidden" id="claimFoundId" />
+        <input type="text" id="claimantName" placeholder="Claimant name" required />
+        <textarea id="claimDetails" rows="4" placeholder="Describe proof of ownership" required></textarea>
+        <button type="submit" class="btn">Submit Claim</button>
+      </form>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
